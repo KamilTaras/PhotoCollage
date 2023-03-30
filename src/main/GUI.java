@@ -7,12 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static main.ProcessedImage.*;
 
-public class UI extends JFrame implements ActionListener {
+public class GUI extends JFrame implements ActionListener {
 
 
     private static final int WINDOW_WIDTH = 400;
@@ -20,24 +19,24 @@ public class UI extends JFrame implements ActionListener {
 
     private int counter = 0;
     private JButton openButton, saveButton, makingButton;
-    private JLabel imageLabel;
+    private JLabel imageLabel, counterLabel;
 
     private JFileChooser fileChooser;
 
-//    private ImageIcon imageIcon;
 
     private BufferedImage basicImage = new ProcessedImage().createABackground();
     private int height = basicImage.getHeight();
 
     private ArrayList<BufferedImage> images = new ArrayList<>();
 
-    public UI() {
+    public GUI() {
         setTitle("CollageMaker");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         openButton = new JButton("Open");
         openButton.addActionListener(this);
+        counterLabel = new JLabel("You have uploaded: " + images.size() + " photos");
 
         makingButton = new JButton("Make an collage");
         makingButton.addActionListener(this);
@@ -49,12 +48,17 @@ public class UI extends JFrame implements ActionListener {
         JPanel buttonPanel2 = new JPanel();
 
         buttonPanel.add(openButton);
+        buttonPanel.add(counterLabel);
+
+
         buttonPanel2.add(makingButton);
         buttonPanel2.add(saveButton);
+//        add(counterLabel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.NORTH);
         add(buttonPanel2, BorderLayout.SOUTH);
 
         imageLabel = new JLabel();
+
         JScrollPane scrollPane = new JScrollPane(imageLabel);
         add(scrollPane, BorderLayout.EAST);
 
@@ -65,7 +69,7 @@ public class UI extends JFrame implements ActionListener {
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(UI::new);
+        SwingUtilities.invokeLater(GUI::new);
     }
 
     @Override
@@ -76,7 +80,7 @@ public class UI extends JFrame implements ActionListener {
                 File file = fileChooser.getSelectedFile();
                 try {
                     images.add(ImageIO.read(file));
-                    counter++;
+                    counterLabel.setText("You have uploaded: " + images.size() + " photos");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Error opening file.");
                 }
