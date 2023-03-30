@@ -7,17 +7,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static main.ProcessedImage.*;
 
 public class UI extends JFrame implements ActionListener {
 
-//    private int count = 0;
+
+    private static final int WINDOW_WIDTH = 400;
+    private static final int WINDOW_HEIGHT = 300;
+
+    private int counter = 0;
     private JButton openButton, saveButton, makingButton;
     private JLabel imageLabel;
 
     private JFileChooser fileChooser;
+
 //    private ImageIcon imageIcon;
 
     private BufferedImage basicImage = new ProcessedImage().createABackground();
@@ -28,7 +34,7 @@ public class UI extends JFrame implements ActionListener {
     public UI() {
         setTitle("CollageMaker");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         openButton = new JButton("Open");
         openButton.addActionListener(this);
@@ -47,12 +53,6 @@ public class UI extends JFrame implements ActionListener {
         buttonPanel2.add(saveButton);
         add(buttonPanel, BorderLayout.NORTH);
         add(buttonPanel2, BorderLayout.SOUTH);
-//        add(buttonPanel2, BorderLayout.SOUTH);
-
-        // Create UI components
-        JPanel panel = new JPanel();
-        JButton button = new JButton("Click me!");
-
 
         imageLabel = new JLabel();
         JScrollPane scrollPane = new JScrollPane(imageLabel);
@@ -60,13 +60,6 @@ public class UI extends JFrame implements ActionListener {
 
         fileChooser = new JFileChooser();
 
-        // Add components to pane
-
-
-        // Add panel to window
-        getContentPane().add(panel);
-
-        // Show the window
         setVisible(true);
     }
 
@@ -83,6 +76,7 @@ public class UI extends JFrame implements ActionListener {
                 File file = fileChooser.getSelectedFile();
                 try {
                     images.add(ImageIO.read(file));
+                    counter++;
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Error opening file.");
                 }
@@ -95,11 +89,16 @@ public class UI extends JFrame implements ActionListener {
                     xShift += (5 * height) / 8;
                 }
             }catch (Exception ex){
-
+                JOptionPane.showMessageDialog(this, "Error creating collage.");
             }
 
         }else if (e.getSource() == saveButton){
-            savingImages(basicImage, "UItest");
+            try {
+                savingImages(basicImage, "UItest");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error saving collage.");
+            }
+
         }
 
     }

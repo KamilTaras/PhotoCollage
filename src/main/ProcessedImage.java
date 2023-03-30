@@ -12,7 +12,7 @@ public class ProcessedImage {
     private int height;
     private Color color;
 
-    
+
     public ProcessedImage(int width, int height, Color color) {
         this.width = width;
         this.height = height;
@@ -28,13 +28,11 @@ public class ProcessedImage {
 // create a BufferedImage object
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-// create a Graphics2D object for the image
         Graphics2D imageGraphics = image.createGraphics();
 
 // draw a filled rectangle on the image with the color
         imageGraphics.setColor(this.color);
         imageGraphics.fillRect(0, 0, width, height);
-//        imageGraphics.drawLine(0,500, 2000,);
 
         imageGraphics.dispose();
 
@@ -70,23 +68,24 @@ public class ProcessedImage {
                 try {
                     BufferedImage image = ImageIO.read(file);
                     images.add(image);
-                } catch (IOException e) {
-                    // handle exception
+                } catch (IOException ex) {
+                    System.err.println("Error reading image file: " + ex.getMessage());
                 }
             }
         }
         return images;
     }
+
     public static void savingImages(BufferedImage imageToSave){
         savingImages(imageToSave, "image");
     }
+
     public static void savingImages(BufferedImage imageToSave, String nameOfFile){
-//        BufferedImage image = // your BufferedImage instance here
                 File outputfile = new File(nameOfFile + ".png");
         try {
             ImageIO.write(imageToSave, "png", outputfile);
-        } catch (IOException e) {
-            // Handle the exception appropriately
+        } catch (IOException ex) {
+            System.err.println("Error writing image file: " +ex.getMessage());
         }
 
     }
