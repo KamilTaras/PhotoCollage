@@ -61,7 +61,7 @@ public class ProcessedImage {
         return basicImage;
     }
 
-    public static ArrayList<BufferedImage> readingImages(File[] files) throws IOException {
+    public static ArrayList<BufferedImage> readingImages(File[] files){
         ArrayList<BufferedImage> images = new ArrayList<>();
         for (File file : files) {
             if (file.isFile()) {

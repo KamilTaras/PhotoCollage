@@ -2,11 +2,13 @@ package main;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static main.ProcessedImage.*;
@@ -18,8 +20,8 @@ public class GUI extends JFrame implements ActionListener {
     private Integer height = 1024;
 
     final private JButton openButton, saveButton, makingButton, colorButton;
-    final private JLabel imageLabel, counterLabel, heightLabel, nameOfCollageLabel;
-    final private JTextField heightText, nameOfCollageText;
+    final private JLabel imageLabel, counterLabel, heightLabel;
+    final private JTextField heightText;
 
 
     private JFileChooser fileChooser;
@@ -34,7 +36,7 @@ public class GUI extends JFrame implements ActionListener {
         setTitle("CollageMaker");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-
+        setResizable(false);
         //button section
 
         colorButton = new JButton("Choose color of background");
@@ -56,8 +58,7 @@ public class GUI extends JFrame implements ActionListener {
         saveButton.addActionListener(e -> useSaveButton());
 
 
-        nameOfCollageLabel = new JLabel("Enter eventual name of collage:");
-        nameOfCollageText = new JTextField(10);
+
 
         //panel section
 
@@ -71,8 +72,6 @@ public class GUI extends JFrame implements ActionListener {
 
         buttonPanelMiddle.add(openButton);
         buttonPanelMiddle.add(counterLabel);
-        buttonPanelMiddle.add(nameOfCollageLabel);
-        buttonPanelMiddle.add(nameOfCollageText);
 
         buttonPanelBottom.add(makingButton);
         buttonPanelBottom.add(saveButton);
@@ -128,15 +127,27 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
 
-    public void useSaveButton() {
-        try {
-            String nameOfCollage = nameOfCollageText.getText();
-            savingImages(basicImage, nameOfCollage);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error saving collage.");
-        }
+    private void useSaveButton() {
+        if (basicImage != null) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Save Collage As");
+            fileChooser.setFileFilter(new FileNameExtensionFilter("PNG images (*.png)", "png"));
+            fileChooser.setSelectedFile(new File("collage.png"));
+            int userSelection = fileChooser.showSaveDialog(this);
 
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+
+                try {
+                    ImageIO.write(basicImage, "png", fileToSave);
+                    JOptionPane.showMessageDialog(this, "Collage saved successfully!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error saving collage: " + ex.getMessage());
+                }
+            }
+        }
     }
+
 
     public void useColorButton(){
         Color selectedColor = JColorChooser.showDialog(this, "Choose Color", Color.WHITE);
