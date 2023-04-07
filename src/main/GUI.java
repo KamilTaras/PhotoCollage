@@ -13,20 +13,20 @@ import static main.ProcessedImage.*;
 
 public class GUI extends JFrame implements ActionListener {
 
-
-    private static final int WINDOW_WIDTH = 400;
+    private static final int WINDOW_WIDTH = 600;
     private static final int WINDOW_HEIGHT = 300;
+    private Integer height = 1024;
 
-    private JButton openButton, saveButton, makingButton, colorButton;
-    private JLabel imageLabel, counterLabel;
+    final private JButton openButton, saveButton, makingButton, colorButton;
+    final private JLabel imageLabel, counterLabel, heightLabel, nameOfCollageLabel;
+    final private JTextField heightText, nameOfCollageText;
+
 
     private JFileChooser fileChooser;
+    private Color backgroundColor = Color.CYAN;
 
-    private JPanel colorPanel;
+    private BufferedImage basicImage;
 
-
-    private BufferedImage basicImage = new ProcessedImage().createABackground();
-    private int height = basicImage.getHeight();
 
     private ArrayList<BufferedImage> images = new ArrayList<>();
 
@@ -34,6 +34,11 @@ public class GUI extends JFrame implements ActionListener {
         setTitle("CollageMaker");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        //button section
+
+        colorButton = new JButton("Choose color of background");
+        colorButton.addActionListener(e -> useColorButton());
 
         openButton = new JButton("Open");
         openButton.addActionListener(e -> useOpenButton());
@@ -43,24 +48,38 @@ public class GUI extends JFrame implements ActionListener {
         makingButton.addActionListener(e -> useMakingButton());
 
         saveButton = new JButton("Save");
+
+
+        heightLabel = new JLabel("Enter height of collage:");
+        heightText = new JTextField(10);
+
         saveButton.addActionListener(e -> useSaveButton());
 
-        colorButton = new JButton("Choose color of background");
-        colorButton.addActionListener(e -> useColorButton());
 
-        JPanel buttonPanel = new JPanel();
-        JPanel buttonPanel2 = new JPanel();
+        nameOfCollageLabel = new JLabel("Enter eventual name of collage:");
+        nameOfCollageText = new JTextField(10);
 
-        buttonPanel.add(openButton);
-        buttonPanel.add(counterLabel);
-        buttonPanel.add(colorButton);
+        //panel section
 
+        JPanel buttonPanelTop = new JPanel();
+        JPanel buttonPanelMiddle = new JPanel();
+        JPanel buttonPanelBottom = new JPanel();
 
-        buttonPanel2.add(makingButton);
-        buttonPanel2.add(saveButton);
-//        add(counterLabel, BorderLayout.NORTH);
-        add(buttonPanel, BorderLayout.NORTH);
-        add(buttonPanel2, BorderLayout.SOUTH);
+        buttonPanelTop.add(heightLabel);
+        buttonPanelTop.add(heightText);
+        buttonPanelTop.add(colorButton);
+
+        buttonPanelMiddle.add(openButton);
+        buttonPanelMiddle.add(counterLabel);
+        buttonPanelMiddle.add(nameOfCollageLabel);
+        buttonPanelMiddle.add(nameOfCollageText);
+
+        buttonPanelBottom.add(makingButton);
+        buttonPanelBottom.add(saveButton);
+
+        add(buttonPanelTop, BorderLayout.NORTH);
+        add(buttonPanelMiddle, BorderLayout.CENTER);
+        add(buttonPanelBottom, BorderLayout.SOUTH);
 
         imageLabel = new JLabel();
 
@@ -91,6 +110,13 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     public void useMakingButton() {
+        try {
+            height = Integer.valueOf(heightText.getText());
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Provide an Integer value (1024 by default)");
+            height = 1024;
+        }
+        basicImage = new ProcessedImage(2*height,height, backgroundColor).createABackground();
         int xShift = height / 8;
         try {
             for (int i = 0; i < images.size(); i++) {
@@ -104,7 +130,8 @@ public class GUI extends JFrame implements ActionListener {
 
     public void useSaveButton() {
         try {
-            savingImages(basicImage, "UItest");
+            String nameOfCollage = nameOfCollageText.getText();
+            savingImages(basicImage, nameOfCollage);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error saving collage.");
         }
@@ -114,7 +141,8 @@ public class GUI extends JFrame implements ActionListener {
     public void useColorButton(){
         Color selectedColor = JColorChooser.showDialog(this, "Choose Color", Color.WHITE);
         if (selectedColor != null) {
-            colorPanel.setBackground(selectedColor);
+            setBackground(selectedColor);
+            backgroundColor = selectedColor;
             }
 
     }
